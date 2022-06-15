@@ -32,7 +32,7 @@ void main() {
     late NodeBloc nodeBloc;
     late SingleValuePageBloc singleValuePageBloc;
 
-    final Credentials credentials = Credentials(
+    const Credentials credentials = Credentials(
       username: 'admin',
       password: 'password',
       endpoint: 'http://localhost/',

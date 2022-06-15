@@ -23,9 +23,9 @@ void main() {
     setUp(() {});
 
     test('test InitLoadingState equality', () {
-      InitLoadingState<Dashboard> state1 = InitLoadingState<Dashboard>();
-      InitLoadingState<Dashboard> state2 = InitLoadingState<Dashboard>();
-      InitLoadingState<Page> state3 = InitLoadingState<Page>();
+      InitLoadingState<Dashboard> state1 = const InitLoadingState<Dashboard>();
+      InitLoadingState<Dashboard> state2 = const InitLoadingState<Dashboard>();
+      InitLoadingState<Page> state3 = const InitLoadingState<Page>();
 
       expect(state1 == state2, true);
       expect(state1 == state3, false);
@@ -33,15 +33,15 @@ void main() {
     });
 
     test('test OneResultState equality', () {
-      OneResultState<Dashboard> state1 = OneResultState<Dashboard>(
+      OneResultState<Dashboard> state1 = const OneResultState<Dashboard>(
         isLoading: false,
         isSaved: false,
       );
-      OneResultState<Dashboard> state2 = OneResultState<Dashboard>(
+      OneResultState<Dashboard> state2 = const OneResultState<Dashboard>(
         isLoading: false,
         isSaved: false,
       );
-      OneResultState<Dashboard> state3 = OneResultState<Dashboard>(
+      OneResultState<Dashboard> state3 = const OneResultState<Dashboard>(
         isLoading: true,
         isSaved: false,
       );
@@ -52,13 +52,15 @@ void main() {
   });
 
   test('test MultipleResultState equality', () {
-    MultipleResultState<Dashboard> state1 = MultipleResultState<Dashboard>(
+    MultipleResultState<Dashboard> state1 =
+        const MultipleResultState<Dashboard>(
       isLoading: false,
     );
-    MultipleResultState<Dashboard> state2 = MultipleResultState<Dashboard>(
+    MultipleResultState<Dashboard> state2 =
+        const MultipleResultState<Dashboard>(
       isLoading: false,
     );
-    MultipleResultState<Page> state3 = MultipleResultState<Page>(
+    MultipleResultState<Page> state3 = const MultipleResultState<Page>(
       isLoading: false,
     );
 
@@ -68,13 +70,13 @@ void main() {
   });
 
   test('test LoadedFileState equality', () {
-    LoadedFileState<Dashboard> state1 = LoadedFileState<Dashboard>(
+    LoadedFileState<Dashboard> state1 = const LoadedFileState<Dashboard>(
       path: 'test',
     );
-    LoadedFileState<Dashboard> state2 = LoadedFileState<Dashboard>(
+    LoadedFileState<Dashboard> state2 = const LoadedFileState<Dashboard>(
       path: 'test',
     );
-    LoadedFileState<Dashboard> state3 = LoadedFileState<Dashboard>(
+    LoadedFileState<Dashboard> state3 = const LoadedFileState<Dashboard>(
       path: 'test2',
     );
 

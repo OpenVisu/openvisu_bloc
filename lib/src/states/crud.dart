@@ -34,7 +34,7 @@ abstract class CrudState<T extends Model<T>> extends Equatable {
 }
 
 class InitLoadingState<T extends Model<T>> extends CrudState<T> {
-  InitLoadingState() : super(isLoading: true);
+  const InitLoadingState() : super(isLoading: true);
 
   @override
   final hasData = false;
@@ -45,7 +45,7 @@ class OneResultState<T extends Model<T>> extends CrudState<T> {
   final T? model;
   final bool isSaved;
 
-  OneResultState({
+  const OneResultState({
     super.id,
     required super.isLoading,
     super.error,
@@ -62,7 +62,7 @@ class OneResultState<T extends Model<T>> extends CrudState<T> {
   @override
   List<Object> get props => super.props
     ..addAll([
-      this.isSaved,
+      isSaved,
       if (model != null) model!,
       if (identifier != null) identifier!,
     ]);
@@ -71,7 +71,7 @@ class OneResultState<T extends Model<T>> extends CrudState<T> {
 class MultipleResultState<T extends Model<T>> extends CrudState<T> {
   final List<T>? models;
 
-  MultipleResultState({
+  const MultipleResultState({
     required super.isLoading,
     this.models,
     super.error,
@@ -93,7 +93,7 @@ class LoadedFileState<T extends Model<T>> extends CrudState<T> {
   // OneState?
   final String path;
 
-  LoadedFileState({required this.path, message, exception})
+  const LoadedFileState({required this.path, message, exception})
       : super(
           id: null,
           filters: null,

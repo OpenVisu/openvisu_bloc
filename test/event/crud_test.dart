@@ -53,10 +53,11 @@ void main() {
     });
 
     test('test GetMultiple equality', () {
-      GetMultiple<Dashboard> state1 = GetMultiple<Dashboard>(filters: []);
-      GetMultiple<Dashboard> state2 = GetMultiple<Dashboard>(filters: []);
-      GetMultiple<Dashboard> state3 = GetMultiple<Dashboard>(filters: null);
-      GetMultiple<Page> state4 = GetMultiple<Page>(filters: []);
+      GetMultiple<Dashboard> state1 = const GetMultiple<Dashboard>(filters: []);
+      GetMultiple<Dashboard> state2 = const GetMultiple<Dashboard>(filters: []);
+      GetMultiple<Dashboard> state3 =
+          const GetMultiple<Dashboard>(filters: null);
+      GetMultiple<Page> state4 = const GetMultiple<Page>(filters: []);
 
       expect(state1 == state2, true);
       expect(state1 == state3, false);

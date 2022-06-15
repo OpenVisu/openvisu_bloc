@@ -40,7 +40,7 @@ class GetOne<T extends Model<T>> extends GetEvent<T> {
   final Pk<T> id;
   final String? identifier;
 
-  GetOne({
+  const GetOne({
     this.identifier,
     required this.id,
   });
@@ -77,7 +77,7 @@ class GetOne<T extends Model<T>> extends GetEvent<T> {
 class SetOne<T extends Model<T>> extends GetEvent<T> {
   final T model;
 
-  SetOne({
+  const SetOne({
     required this.model,
   });
 
@@ -123,7 +123,7 @@ class Save<T extends Model<T>> extends CrudEvent<T> {
   ///method that is called if the create or update was successfully performed
   final OnSuccess<T>? onSuccess;
 
-  Save({
+  const Save({
     required this.model,
     this.identifier,
     this.onSuccess,

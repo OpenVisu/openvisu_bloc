@@ -29,7 +29,7 @@ void main() {
 
     late NodeBloc nodeBloc;
 
-    final Credentials credentials = Credentials(
+    const Credentials credentials = Credentials(
       username: 'admin',
       password: 'password',
       endpoint: 'http://localhost/',

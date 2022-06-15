@@ -26,7 +26,7 @@ abstract class CrudBloc<T extends Model<T>>
     queriesInit(this);
     updaerInit(this);
 
-    this.authenticationBloc.registerBloc(this);
+    authenticationBloc.registerBloc(this);
 
     super.on<Reset<T>>(_handleResetEvent, transformer: sequential());
     super.on<GetMultiple<T>>(
@@ -48,7 +48,7 @@ abstract class CrudBloc<T extends Model<T>>
   CrudRepository<T> get crudRepository;
 
   reset() {
-    add(new Reset<T>());
+    add(Reset<T>());
   }
 
   save({
@@ -68,7 +68,7 @@ abstract class CrudBloc<T extends Model<T>>
   void _handleResetEvent(Reset<T> _, Emitter<CrudState<T>> emit) async {
     queriesClear();
     crudRepository.cacheClear();
-    emit(new InitLoadingState<T>());
+    emit(InitLoadingState<T>());
   }
 
   void _handleGetMultipleEvent(

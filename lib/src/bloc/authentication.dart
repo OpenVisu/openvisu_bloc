@@ -37,7 +37,7 @@ class AuthenticationBloc
   }
 
   _resetBlocs() {
-    for (CrudBloc crudBloc in this.blocs) {
+    for (CrudBloc crudBloc in blocs) {
       crudBloc.reset();
     }
   }
