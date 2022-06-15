@@ -1,0 +1,40 @@
+name: CD-test
+
+on:
+  schedule:
+    - cron: "30 23 * * *"
+  push:
+    branches: [main, dev]
+    # Publish semver tags as releases.
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: [main, dev]
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: docker.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      - name: Start containers
+        run: docker compose -f "test/docker-compose.yaml" up -d
+      - run: docker compose -f "test/docker-compose.yaml" ps
+      - run: docker compose -f "test/docker-compose.yaml" cp test/data/mysql/init.sql db:/init.sql
+        # perform some tasks to give sql server time to start
+      - run: flutter --version
+      - run: flutter pub get
+      - run: docker compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mariadb -u root --password=yi5S7LHWONx0qWhd openvisu ' < test/data/mysql/init.sql
+      - name: Run tests
+        run: flutter test --coverage
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: coverage/lcov.info

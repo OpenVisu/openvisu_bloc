@@ -1,0 +1,30 @@
+name: openvisu_bloc
+description: A Package to manage OpenVisu Bloc.
+version: 0.0.1
+homepage: https://github.com/OpenVisu/openvisu_bloc
+publish_to: none
+
+environment:
+  sdk: ">=2.17.1 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  bloc: ^8.0.0
+  flutter_bloc: ^8.0.0
+  font_awesome_flutter: ^10.0.0
+  charts_flutter: ^0.12.0
+  fl_chart: ^0.50.1
+  bloc_concurrency: ^0.2.0
+  equatable: ^2.0.3
+  openvisu_repository:
+    path: ../openvisu_repository
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  test: ^1.16.8
+  bloc_test: ^9.0.0
+  mockito: ^5.2.0
