@@ -19,7 +19,9 @@ dependencies:
   bloc_concurrency: ^0.2.0
   equatable: ^2.0.3
   openvisu_repository:
-    path: ../openvisu_repository
+    git:
+      url: git://github.com/OpenVisu/openvisu_repository.git
+      ref: main
 
 dev_dependencies:
   flutter_test:
