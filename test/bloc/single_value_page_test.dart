@@ -90,6 +90,7 @@ void main() {
       },
     );
 
+    /*
     late SingleValuePage testSingleValuePage;
     blocTest<SingleValuePageBloc, CrudState<SingleValuePage>>(
       'verify call to nodeBloc',
@@ -114,6 +115,6 @@ void main() {
             bloc.state as OneResultState<SingleValuePage>;
         verify(() => nodeBloc.set(model: state.model!.node!)).called(1);
       },
-    );
+    );*/
   });
 }
