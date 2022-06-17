@@ -11,8 +11,12 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+[![codecov](https://codecov.io/gh/OpenVisu/openvisu_bloc/branch/main/graph/badge.svg?token=FZH5WMDI0Y)](https://codecov.io/gh/OpenVisu/openvisu_bloc)
+
+
+A Dart Package wich handels all Bloc, State, Event related code used by OpenVisu. Furthermore some custom state handling widgets are provided.
+
+This Package is not yet stable and things might change without prior notice!
 
 ## Features
 
@@ -20,8 +24,10 @@ TODO: List what your package can do. Maybe include images, gifs, or videos.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Import package:
+```dart
+import 'package:openvisu_bloc/openvisu_bloc.dart';
+```
 
 ## Usage
 
@@ -30,6 +36,25 @@ to `/example` folder.
 
 ```dart
 const like = 'sample';
+```
+
+## Run tests
+
+Start the test environment and import test data:
+```bash
+docker compose -f "test/docker-compose.yaml" up -d
+docker compose -f "test/docker-compose.yaml" cp test/data/mysql/init.sql db:/init.sql
+docker compose -f "test/docker-compose.yaml" exec -T db sh -c 'exec mariadb -u root --password=yi5S7LHWONx0qWhd openvisu ' < test/data/mysql/init.sql
+```
+
+Run the tests:
+```bash
+flutter test
+```
+
+### To update the test data set run 
+```bash
+docker compose -f "test/docker-compose.yaml" exec db /usr/bin/mysqldump -u root --password=yi5S7LHWONx0qWhd openvisu > test/data/mysql/init.sql
 ```
 
 ## Additional information
