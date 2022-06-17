@@ -54,6 +54,7 @@ void main() {
       );
     });
 
+    /*
     blocTest<AuthenticationBloc, AuthenticationState>(
       'test if unauthenticated is detected after start',
       setUp: () async {
@@ -64,7 +65,7 @@ void main() {
       expect: () => [
         isA<AuthenticationUnauthenticated>(),
       ],
-    );
+    );*/
 
     blocTest<AuthenticationBloc, AuthenticationState>(
       'test if authenticated is detected after start',
