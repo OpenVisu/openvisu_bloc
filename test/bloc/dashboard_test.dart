@@ -72,7 +72,6 @@ void main() {
             .having((s) => s.id, 'test id', Pk<Dashboard>(2))
             .having((s) => s.error, 'has error', isNotNull),
       ],
-      verify: (bloc) {},
     );
   });
 }
