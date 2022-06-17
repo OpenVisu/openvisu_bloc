@@ -24,7 +24,7 @@ abstract class CrudBloc<T extends Model<T>>
 
   CrudBloc({required this.authenticationBloc}) : super(InitLoadingState<T>()) {
     queriesInit(this);
-    updaerInit(this);
+    updaterInit(this);
 
     authenticationBloc.registerBloc(this);
 

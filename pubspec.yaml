@@ -23,6 +23,7 @@ dependencies:
     git:
       url: https://github.com/OpenVisu/openvisu_repository.git
       ref: main
+  mocktail: ^0.3.0
 
 dev_dependencies:
   flutter_test:

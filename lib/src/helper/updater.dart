@@ -15,6 +15,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:openvisu_bloc/openvisu_bloc.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
 
@@ -22,22 +23,28 @@ abstract class Updater<T extends Model<T>> {
   // list of queries that should be refreshed regulary
   final Map<GetEvent<T>, int> _queries = {};
 
+  @visibleForTesting
   Timer timer = Timer(Duration.zero, () {});
 
   late CrudBloc<T> bloc;
+  late Duration interval;
 
-  void updaerInit(CrudBloc<T> bloc) {
+  void updaterInit(
+    final CrudBloc<T> bloc, {
+    final Duration interval = const Duration(seconds: 10),
+  }) {
     this.bloc = bloc;
+    this.interval = interval;
   }
 
   void addListener(final GetEvent<T> getEvent) {
+    timer = Timer.periodic(interval, (Timer t) => update());
     if (_queries.containsKey(getEvent)) {
       _queries[getEvent] = _queries[getEvent]! + 1;
     } else {
       _queries[getEvent] = 1;
       if (!timer.isActive) {
-        timer =
-            Timer.periodic(const Duration(seconds: 10), (Timer t) => _update());
+        timer = Timer.periodic(interval, (Timer t) => update());
       }
     }
   }
@@ -53,7 +60,8 @@ abstract class Updater<T extends Model<T>> {
     }
   }
 
-  void _update() {
+  @visibleForTesting
+  void update() {
     for (final GetEvent<T> getEvent in _queries.keys) {
       bloc.add(getEvent);
     }
