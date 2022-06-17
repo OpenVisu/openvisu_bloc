@@ -13,15 +13,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import 'package:mocktail/mocktail.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:openvisu_bloc/openvisu_bloc.dart';
 import 'package:test/test.dart';
 import 'package:bloc_test/bloc_test.dart';
-
-class MockPageBloc extends Mock implements PageBloc {}
-
-class MockEvent extends Mock implements CrudEvent<Page> {}
 
 void main() {
   group('DashboardBloc', () {
@@ -36,11 +31,6 @@ void main() {
     );
     final AuthenticationBloc authenticationBloc = AuthenticationBloc(
       authenticationRepository,
-    );
-
-    final DashboardBloc dashboardBloc = DashboardBloc(
-      repository: dashboardRepository,
-      authenticationBloc: authenticationBloc,
     );
 
     const Credentials credentials = Credentials(
