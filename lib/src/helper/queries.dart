@@ -39,7 +39,7 @@ abstract class Queries<T extends Model<T>> {
     if (queriesContains(getEvent)) {
       _queries[getEvent] = _queries[getEvent]! + 1;
     } else {
-      bloc.add(getEvent); // TODO good idea?
+      bloc.add(getEvent);
       _queries[getEvent] = 1;
     }
   }
