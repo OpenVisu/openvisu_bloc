@@ -19,13 +19,29 @@ import 'package:openvisu_bloc/openvisu_bloc.dart';
 import 'package:test/test.dart';
 import 'package:bloc_test/bloc_test.dart';
 
+class MockPageBloc extends Mock implements PageBloc {}
+
+class MockEvent extends Mock implements CrudEvent<Page> {}
+
 void main() {
   group('DashboardBloc', () {
-    late CredentialsRepository credentialsRepository;
-    late AuthenticationRepository authenticationRepository;
-    late DashboardRepository dashboardRepository;
-    late AuthenticationBloc authenticationBloc;
-    late DashboardBloc dashboardBloc;
+    final CredentialsRepository credentialsRepository = CredentialsRepository();
+    final AuthenticationRepository authenticationRepository =
+        AuthenticationRepository(
+      credentialsRepository: credentialsRepository,
+      httpTimeOut: const Duration(seconds: 10),
+    );
+    final DashboardRepository dashboardRepository = DashboardRepository(
+      authenticationRepository: authenticationRepository,
+    );
+    final AuthenticationBloc authenticationBloc = AuthenticationBloc(
+      authenticationRepository,
+    );
+
+    final DashboardBloc dashboardBloc = DashboardBloc(
+      repository: dashboardRepository,
+      authenticationBloc: authenticationBloc,
+    );
 
     const Credentials credentials = Credentials(
       username: 'admin',
@@ -33,36 +49,40 @@ void main() {
       endpoint: 'http://localhost/',
     );
 
-    setUp(() {
-      credentialsRepository = CredentialsRepository();
-      authenticationRepository = AuthenticationRepository(
-        credentialsRepository: credentialsRepository,
-        httpTimeOut: const Duration(seconds: 10),
-      );
-      dashboardRepository = DashboardRepository(
-        authenticationRepository: authenticationRepository,
-      );
-      authenticationBloc = AuthenticationBloc(authenticationRepository);
-
-      dashboardBloc = DashboardBloc(
-        repository: dashboardRepository,
-        authenticationBloc: authenticationBloc,
+    setUp(() async {
+      await authenticationRepository.authenticate(
+        credentials: credentials,
+        saveLogin: false,
       );
     });
 
     blocTest<DashboardBloc, CrudState<Dashboard>>(
-      'test if authenticated is detected after start',
-      setUp: () async {
-        await authenticationRepository.authenticate(
-          credentials: credentials,
-          saveLogin: false,
-        );
-      },
-      build: () => dashboardBloc,
+      'test GetOne<Dashboard>() success',
+      build: () => DashboardBloc(
+        repository: dashboardRepository,
+        authenticationBloc: authenticationBloc,
+      ),
       act: (bloc) => bloc.add(GetOne<Dashboard>(id: Pk<Dashboard>(1))),
       expect: () => [
-        isA<OneResultState<Dashboard>>(),
+        isA<OneResultState<Dashboard>>()
+            .having((s) => s.id, 'test id', Pk<Dashboard>(1))
+            .having((s) => s.error, 'has no error', isNull),
       ],
+    );
+
+    blocTest<DashboardBloc, CrudState<Dashboard>>(
+      'test GetOne<Dashboard>() fail',
+      build: () => DashboardBloc(
+        repository: dashboardRepository,
+        authenticationBloc: authenticationBloc,
+      ),
+      act: (bloc) => bloc.add(GetOne<Dashboard>(id: Pk<Dashboard>(2))),
+      expect: () => [
+        isA<OneResultState<Dashboard>>()
+            .having((s) => s.id, 'test id', Pk<Dashboard>(2))
+            .having((s) => s.error, 'has error', isNotNull),
+      ],
+      verify: (bloc) {},
     );
   });
 }
