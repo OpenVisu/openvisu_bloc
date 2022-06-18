@@ -35,6 +35,9 @@ class OvRepositoryProviders extends StatelessWidget {
     final NodeRepository nodeRepository = NodeRepository(
       authenticationRepository: authenticationRepository,
     );
+    final TimeSerialRepository timeSerialRepository = TimeSerialRepository(
+      authenticationRepository: authenticationRepository,
+    );
 
     providers = [
       RepositoryProvider<AuthenticationRepository>(
@@ -89,14 +92,13 @@ class OvRepositoryProviders extends StatelessWidget {
           authenticationRepository: authenticationRepository,
         ),
       ),
+      RepositoryProvider<TimeSerialRepository>(
+        create: (context) => timeSerialRepository,
+      ),
       RepositoryProvider<ChartPageRepository>(
         create: (context) => ChartPageRepository(
           authenticationRepository: authenticationRepository,
-        ),
-      ),
-      RepositoryProvider<TimeSerialRepository>(
-        create: (context) => TimeSerialRepository(
-          authenticationRepository: authenticationRepository,
+          timeSerialRepository: timeSerialRepository,
         ),
       ),
       RepositoryProvider<SingleValuePageRepository>(
