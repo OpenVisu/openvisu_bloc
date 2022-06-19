@@ -127,6 +127,18 @@ void main() {
           isNotNull,
         )
       ],
+      verify: (bloc) {
+        // bloc needed to tearDown
+        bloc.removeListener(GetMultiple<Page>(
+          filters: [
+            Filter(
+              key: 'dashboard_id',
+              operator: FilterType.EQ,
+              value: Pk<Dashboard>(1).toString(),
+            ),
+          ],
+        ));
+      },
       tearDown: () {
         pageRepository.cacheClear();
       },
@@ -136,7 +148,7 @@ void main() {
 
     /// helper var to temporarily store the current page used by the tests
     late Page page;
-    /*
+
     /// test if model gets deleted
     blocTest<PageBloc, CrudState<Page>>(
       'test Delete<Page>()',
@@ -191,9 +203,8 @@ void main() {
         repository: pageRepository,
         authenticationBloc: authenticationBloc,
       ),
-      act: (bloc) async {
+      act: (bloc) {
         bloc.queriesAdd(GetOne<Page>(id: page.id));
-        await Future.delayed(const Duration(seconds: 1));
         bloc.add(Delete<Page>(model: page));
       },
       wait: const Duration(seconds: 10),
@@ -238,9 +249,8 @@ void main() {
         repository: pageRepository,
         authenticationBloc: authenticationBloc,
       ),
-      act: (bloc) async {
+      act: (bloc) {
         bloc.queriesAdd(const GetMultiple<Page>(filters: []));
-        await Future.delayed(const Duration(seconds: 1));
         bloc.add(Delete<Page>(model: page));
       },
       wait: const Duration(seconds: 10),
@@ -263,6 +273,6 @@ void main() {
       tearDown: () {
         pageRepository.cacheClear();
       },
-    );*/
+    );
   });
 }
