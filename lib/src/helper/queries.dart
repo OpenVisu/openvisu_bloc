@@ -76,7 +76,7 @@ abstract class Queries<T extends Model<T>> {
     for (GetEvent<T> getEvent in queriesAll()) {
       if (getEvent is GetOne<T>) {
         if (getEvent.id == id) {
-          emit(OneResultState(
+          emit(OneResultState<T>(
             id: getEvent.id,
             error: YiiErrorInformation.wasDeleted(),
             isSaved: true,
@@ -85,7 +85,7 @@ abstract class Queries<T extends Model<T>> {
           // the item was deleted, thus all further queries would fail
           _queriesRemoveAll(getEvent);
         }
-      }
+      } 
       if (getEvent is GetMultiple<T>) {
         // multiple filters might be affected, thus reload all of them
         bloc.add(getEvent);
