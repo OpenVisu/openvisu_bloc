@@ -58,6 +58,9 @@ void main() {
             .having((s) => s.id, 'test id', Pk<Page>(1))
             .having((s) => s.error, 'has no error', isNull),
       ],
+      tearDown: () {
+        pageRepository.cacheClear();
+      },
     );
 
     blocTest<PageBloc, CrudState<Page>>(
@@ -72,17 +75,20 @@ void main() {
             .having((s) => s.id, 'test id', Pk<Page>(2))
             .having((s) => s.error, 'has error', isNotNull),
       ],
+      tearDown: () {
+        pageRepository.cacheClear();
+      },
     );
 
     /// if a new model is added, active queries that might be affected
     /// should automatically be updated
     blocTest<PageBloc, CrudState<Page>>(
       'test Save<Page>() for new model',
-      build: () {
-        final PageBloc bloc = PageBloc(
-          repository: pageRepository,
-          authenticationBloc: authenticationBloc,
-        );
+      build: () => PageBloc(
+        repository: pageRepository,
+        authenticationBloc: authenticationBloc,
+      ),
+      act: (bloc) {
         bloc.addListener(GetMultiple<Page>(
           filters: [
             Filter(
@@ -92,17 +98,16 @@ void main() {
             ),
           ],
         ));
-        return bloc;
-      },
-      act: (bloc) => bloc.add(
-        Save<Page>(
-          model: Page.createDefault().copyWith(
-            name: 'new test page',
-            dashboardId: Pk<Dashboard>(1),
-            pageType: PageType.text,
+        bloc.add(
+          Save<Page>(
+            model: Page.createDefault().copyWith(
+              name: 'new test page',
+              dashboardId: Pk<Dashboard>(1),
+              pageType: PageType.text,
+            ),
           ),
-        ),
-      ),
+        );
+      },
       wait: const Duration(seconds: 10),
       expect: () => [
         isA<OneResultState<Page>>()
@@ -122,13 +127,16 @@ void main() {
           isNotNull,
         )
       ],
+      tearDown: () {
+        pageRepository.cacheClear();
+      },
     );
 
     // TODO add tests for Save<Page>() for existing models (update)
 
     /// helper var to temporarily store the current page used by the tests
     late Page page;
-
+    /*
     /// test if model gets deleted
     blocTest<PageBloc, CrudState<Page>>(
       'test Delete<Page>()',
@@ -160,6 +168,9 @@ void main() {
             ),
           ),
         );
+      },
+      tearDown: () {
+        pageRepository.cacheClear();
       },
     );
 
@@ -206,6 +217,9 @@ void main() {
               ),
             ),
       ],
+      tearDown: () {
+        pageRepository.cacheClear();
+      },
     );
 
     /// deleting a model should notify all active queries that might include
@@ -246,6 +260,9 @@ void main() {
             .having((s) => s.hasData, 'hasData', true)
             .having((s) => s.isLoading, 'isLoading', false),
       ],
-    );
+      tearDown: () {
+        pageRepository.cacheClear();
+      },
+    );*/
   });
 }
