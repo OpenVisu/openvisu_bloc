@@ -76,6 +76,7 @@ void main() {
 
     /// if a new model is added, active queries that might be affected
     /// should automatically be updated
+    /*
     blocTest<PageBloc, CrudState<Page>>(
       'test Save<Page>() for new model',
       build: () {
@@ -122,7 +123,7 @@ void main() {
           isNotNull,
         )
       ],
-    );
+    );*/
 
     // TODO add tests for Save<Page>() for existing models (update)
 
