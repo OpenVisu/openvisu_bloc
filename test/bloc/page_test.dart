@@ -45,7 +45,6 @@ void main() {
         saveLogin: false,
       );
     });
-    /*
 
     blocTest<PageBloc, CrudState<Page>>(
       'test GetOne<Dashboard>() success',
@@ -73,7 +72,7 @@ void main() {
             .having((s) => s.id, 'test id', Pk<Page>(2))
             .having((s) => s.error, 'has error', isNotNull),
       ],
-    );*/
+    );
 
     /// if a new model is added, active queries that might be affected
     /// should automatically be updated
@@ -123,11 +122,130 @@ void main() {
           isNotNull,
         )
       ],
-      tearDown: () async {
-        List<Pk<Page>> pageIds =
-            (await pageRepository.all([])).map((e) => e.id).toList();
-        pageRepository.delete(pageIds.last);
+    );
+
+    // TODO add tests for Save<Page>() for existing models (update)
+
+    /// helper var to temporarily store the current page used by the tests
+    late Page page;
+
+    /// test if model gets deleted
+    blocTest<PageBloc, CrudState<Page>>(
+      'test Delete<Page>()',
+      setUp: () async {
+        page = Page.createDefault().copyWith(
+          name: 'test name',
+          dashboardId: Pk<Dashboard>(1),
+          pageType: PageType.text,
+        );
+        page = await pageRepository.add(page);
       },
+      build: () => PageBloc(
+        repository: pageRepository,
+        authenticationBloc: authenticationBloc,
+      ),
+      act: (bloc) {
+        bloc.add(Delete<Page>(model: page));
+      },
+      verify: (bloc) async {
+        expect(
+          () async {
+            await pageRepository.get(page.id);
+          },
+          throwsA(
+            isA<BackendError>().having(
+              (e) => (e.info as YiiExceptionInformation).message,
+              'message',
+              startsWith('Object not found: '),
+            ),
+          ),
+        );
+      },
+    );
+
+    /// deleting a model should notify all active queries on that model
+    /// that the model was deleted
+    blocTest<PageBloc, CrudState<Page>>(
+      'test Delete<Page>() with active GetOne<Page>() query',
+      setUp: () async {
+        page = Page.createDefault().copyWith(
+          name: 'test name',
+          dashboardId: Pk<Dashboard>(1),
+          pageType: PageType.text,
+        );
+        page = await pageRepository.add(page);
+        pageRepository.cacheClear();
+      },
+      build: () => PageBloc(
+        repository: pageRepository,
+        authenticationBloc: authenticationBloc,
+      ),
+      act: (bloc) async {
+        bloc.queriesAdd(GetOne<Page>(id: page.id));
+        await Future.delayed(const Duration(seconds: 1));
+        bloc.add(Delete<Page>(model: page));
+      },
+      wait: const Duration(seconds: 10),
+      expect: () => [
+        // one state because of queriesAdd
+        isA<OneResultState<Page>>()
+            .having((s) => s.model, 'model', isNotNull)
+            .having((s) => s.isLoading, 'isLoading', false),
+        // one state created because of Delete<Page>
+        isA<OneResultState<Page>>()
+            .having((s) => s.error, 'test error', isNotNull)
+            .having((s) => s.isSaved, 'isSaved', true)
+            .having((s) => s.isLoading, 'isLoading', false)
+            .having(
+              (s) => s.error,
+              'test if error indicates delete',
+              isA<YiiErrorInformation>().having(
+                (e) => e.message,
+                'message',
+                'The Item was deleted',
+              ),
+            ),
+      ],
+    );
+
+    /// deleting a model should notify all active queries that might include
+    /// the model that the model was deleted
+    blocTest<PageBloc, CrudState<Page>>(
+      'test Delete<Page>() with active GetMultiple<Page>() query',
+      setUp: () async {
+        page = Page.createDefault().copyWith(
+          name: 'test name',
+          dashboardId: Pk<Dashboard>(1),
+          pageType: PageType.text,
+        );
+        page = await pageRepository.add(page);
+      },
+      build: () => PageBloc(
+        repository: pageRepository,
+        authenticationBloc: authenticationBloc,
+      ),
+      act: (bloc) async {
+        bloc.queriesAdd(const GetMultiple<Page>(filters: []));
+        await Future.delayed(const Duration(seconds: 1));
+        bloc.add(Delete<Page>(model: page));
+      },
+      wait: const Duration(seconds: 10),
+      expect: () => [
+        // one state because of queriesAdd
+        isA<MultipleResultState<Page>>()
+            .having((s) => s.error, 'error', isNull)
+            .having((s) => s.hasData, 'hasData', true)
+            .having((s) => s.isLoading, 'isLoading', false),
+        // two states created because of Delete<Page>
+        isA<MultipleResultState<Page>>()
+            .having((s) => s.error, 'error', isNull)
+            .having((s) => s.hasData, 'hasData', true)
+            .having((s) => s.isLoading, 'isLoading', true),
+        isA<MultipleResultState<Page>>()
+            .having((s) => s.error, 'error', isNull)
+            .having((s) => s.hasData, 'hasData', true)
+            .having((s) => s.isLoading, 'isLoading', false),
+      ],
     );
   });
 }
