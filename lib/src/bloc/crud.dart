@@ -28,20 +28,29 @@ abstract class CrudBloc<T extends Model<T>>
 
     authenticationBloc.registerBloc(this);
 
-    super.on<Reset<T>>(_handleResetEvent, transformer: sequential());
-    super.on<GetMultiple<T>>(
-      _handleGetMultipleEvent,
+    super.on<CrudEvent<T>>(
+      (event, emit) async {
+        if (event is Reset<T>) {
+          await _handleResetEvent(event, emit);
+        } else if (event is GetMultiple<T>) {
+          await _handleGetMultipleEvent(event, emit);
+        } else if (event is GetOne<T>) {
+          await _handleGetEvent(event, emit);
+        } else if (event is SetOne<T>) {
+          await _handleSetEvent(event, emit);
+        } else if (event is Sort<T>) {
+          await handleSortEvent(event, emit);
+        } else if (event is Swap<T>) {
+          await _handleSwapEvent(event, emit);
+        } else if (event is Save<T>) {
+          await _handleSaveEvent(event, emit);
+        } else if (event is Delete<T>) {
+          await _handleDeleteEvent(event, emit);
+        } else if (event is EditNode<T>) {
+          await _handleEditNodeEvent(event, emit);
+        }
+      },
       transformer: sequential(),
-    );
-    super.on<GetOne<T>>(_handleGetEvent, transformer: sequential());
-    super.on<SetOne<T>>(_handleSetEvent, transformer: sequential());
-    super.on<Sort<T>>(handleSortEvent, transformer: sequential());
-    super.on<Swap<T>>(_handleSwapEvent, transformer: sequential());
-    super.on<Save<T>>(_handleSaveEvent, transformer: sequential());
-    super.on<Delete<T>>(_handleDeleteEvent, transformer: sequential());
-    super.on<EditNode<T>>(
-      (event, emit) async =>
-          await crudRepository.editNode(event.nodeId, event.newValue),
     );
   }
 
