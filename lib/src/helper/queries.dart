@@ -61,6 +61,15 @@ abstract class Queries<T extends Model<T>> {
     return _queries.keys.toList();
   }
 
+  queriesModelAdded(final Model<T> model, Emitter<CrudState<T>> emit) {
+    for (GetEvent<T> getEvent in queriesAll()) {
+      if (getEvent is GetMultiple<T>) {
+        // multiple filters might be affected, thus reload all of them
+        bloc.add(getEvent);
+      }
+    }
+  }
+
   /// after an item was deleted this method make sure to update
   /// all running queries
   queriesModelDeleted(final Pk<T> id, Emitter<CrudState<T>> emit) {

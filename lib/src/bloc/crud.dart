@@ -205,9 +205,10 @@ abstract class CrudBloc<T extends Model<T>>
         isSaved: false,
       ));
       await slowDown();
-      late final Model model;
+      late final Model<T> model;
       if (event.model.isNew) {
         model = await crudRepository.add(event.model);
+        queriesModelAdded(model, emit);
       } else {
         model = await crudRepository.update(event.model);
       }

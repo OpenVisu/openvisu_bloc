@@ -45,6 +45,7 @@ void main() {
         saveLogin: false,
       );
     });
+    /*
 
     blocTest<PageBloc, CrudState<Page>>(
       'test GetOne<Dashboard>() success',
@@ -72,6 +73,61 @@ void main() {
             .having((s) => s.id, 'test id', Pk<Page>(2))
             .having((s) => s.error, 'has error', isNotNull),
       ],
+    );*/
+
+    /// if a new model is added, active queries that might be affected
+    /// should automatically be updated
+    blocTest<PageBloc, CrudState<Page>>(
+      'test Save<Page>() for new model',
+      build: () {
+        final PageBloc bloc = PageBloc(
+          repository: pageRepository,
+          authenticationBloc: authenticationBloc,
+        );
+        bloc.addListener(GetMultiple<Page>(
+          filters: [
+            Filter(
+              key: 'dashboard_id',
+              operator: FilterType.EQ,
+              value: Pk<Dashboard>(1).toString(),
+            ),
+          ],
+        ));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(
+        Save<Page>(
+          model: Page.createDefault().copyWith(
+            name: 'new test page',
+            dashboardId: Pk<Dashboard>(1),
+            pageType: PageType.text,
+          ),
+        ),
+      ),
+      wait: const Duration(seconds: 10),
+      expect: () => [
+        isA<OneResultState<Page>>()
+            .having((s) => s.isSaved, 'test isSaved', false)
+            .having((s) => s.model!.isNew, 'test if model isNew', true),
+        isA<OneResultState<Page>>()
+            .having((s) => s.isSaved, 'test isSaved', true)
+            .having((s) => s.model, 'test if model exists', isNotNull)
+            .having(
+              (s) => s.model!.dashboardId,
+              'dashboardId',
+              Pk<Dashboard>(1),
+            ),
+        isA<MultipleResultState<Page>>().having(
+          (s) => s.models,
+          'test if models exist',
+          isNotNull,
+        )
+      ],
+      tearDown: () async {
+        List<Pk<Page>> pageIds =
+            (await pageRepository.all([])).map((e) => e.id).toList();
+        pageRepository.delete(pageIds.last);
+      },
     );
   });
 }
