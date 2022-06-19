@@ -22,39 +22,49 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 abstract class ChartCubit<T extends ChartState<T>> extends Cubit<T> {
   final Pk<ChartPage> chartPageId;
   final ChartType chartType;
+  final List<TimeSerial> timeSerials;
+  final TimeSerialRepository timeSerialRepository;
   Timer timer = Timer(Duration.zero, () {});
 
-  ChartCubit({
-    required this.chartPageId,
-    required this.chartType,
-    initialState,
-  }) : super(initialState);
+  ChartCubit(
+      {required this.chartPageId,
+      required this.chartType,
+      required this.timeSerialRepository,
+      initialState,
+      this.timeSerials = const [],
+      final List<Pk<TimeSerial>>? visibleTimeSerials})
+      : super(initialState) {
+    init(visibleTimeSerials);
+  }
 
   static ChartCubit<ChartState> fromChartPage(
     final ChartPage chartPage, {
     final playing = true,
     final List<Pk<TimeSerial>>? visibleTimeSerials,
+    required final TimeSerialRepository timeSerialRepository,
   }) {
     if (chartPage.isLive()) {
       return LiveChartCubit(
         chartPageId: chartPage.id,
-        timeSerials: chartPage.timeSerials,
         chartType: chartPage.chartType,
         playing: playing,
         visibleTimeSerials: visibleTimeSerials,
+        timeSerialRepository: timeSerialRepository,
       );
     } else {
       return HistoryChartCubit(
         chartPageId: chartPage.id,
-        timeSerials: chartPage.timeSerials,
         viewPortWidth: chartPage.interval,
         initViewPortEnd: DateTime.now(),
         chartType: chartPage.chartType,
         playing: playing,
         visibleTimeSerials: visibleTimeSerials,
+        timeSerialRepository: timeSerialRepository,
       );
     }
   }
+
+  void init(final List<Pk<TimeSerial>>? visibleTimeSerials);
 
   void showTimeSerial(Pk<TimeSerial> id) {
     if (!state.isTimeSerialVisible(id)) {

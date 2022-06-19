@@ -24,31 +24,25 @@ class HistoryChartCubit extends ChartCubit<HistoryChartState> {
 
   HistoryChartCubit({
     required final Pk<ChartPage> chartPageId,
-    required final List<TimeSerial> timeSerials,
     final List<Pk<TimeSerial>>? visibleTimeSerials,
     required final bool playing,
     required Duration viewPortWidth,
     required DateTime initViewPortEnd, // helper var, must be the current time
     required final ChartType chartType,
+    required super.timeSerialRepository,
   }) : super(
             chartPageId: chartPageId,
             chartType: chartType,
             initialState: HistoryChartState(
-              data: {
-                for (TimeSerial ts in timeSerials) ts.id: ts.measurements,
-              },
+              data: {},
               viewPortStart: initViewPortEnd.subtract(viewPortWidth),
               viewPortEnd: initViewPortEnd,
-              timeSerials: timeSerials,
+              timeSerials: [],
               playing: playing,
               loading: false,
               chartType: chartType,
-              viewPortTop: timeSerials.isEmpty
-                  ? 1
-                  : timeSerials.map((e) => e.maxValue).reduce(max),
-              viewPortBottom: timeSerials.isEmpty
-                  ? 0
-                  : timeSerials.map((e) => e.minValue).reduce(min),
+              viewPortTop: 1,
+              viewPortBottom: 0,
               visibleTimeSerials: visibleTimeSerials,
             )) {
     _updateCache();
@@ -62,6 +56,33 @@ class HistoryChartCubit extends ChartCubit<HistoryChartState> {
       }
       timer = Timer.periodic(duration, (_) => _moveToNow());
     }
+  }
+
+  @override
+  void init(final List<Pk<TimeSerial>>? visibleTimeSerials) async {
+    final List<TimeSerial> timeSerials = await timeSerialRepository.all([
+      Filter(
+        key: 'chart_page_id',
+        operator: FilterType.EQ,
+        value: chartPageId.toString(),
+      )
+    ]);
+    emit(
+      state.copyWith(
+        timeSerials: timeSerials,
+        visibleTimeSerials:
+            visibleTimeSerials ?? timeSerials.map((e) => e.id).toList(),
+        data: {
+          for (TimeSerial ts in timeSerials) ts.id: ts.measurements,
+        },
+        viewPortTop: timeSerials.isEmpty
+            ? 1
+            : timeSerials.map((e) => e.maxValue).reduce(max),
+        viewPortBottom: timeSerials.isEmpty
+            ? 0
+            : timeSerials.map((e) => e.minValue).reduce(min),
+      ),
+    );
   }
 
   /// starts the auto update

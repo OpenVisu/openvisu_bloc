@@ -101,14 +101,14 @@ class HistoryChartState extends ChartState<HistoryChartState> {
     final ChartType? chartType,
   }) {
     Map<Pk<TimeSerial>, List<FlSpot>>? newPoints;
-    if (data != null) {
-      if (data.length != this.timeSerials.length) {
+    if (data != null && timeSerials != null) {
+      if (data.length != timeSerials.length) {
         throw ArgumentError.value(data, 'data');
       }
 
       newPoints = {};
 
-      for (TimeSerial ts in this.timeSerials) {
+      for (TimeSerial ts in timeSerials) {
         newPoints[ts.id] = data[ts.id]!
             .where((tse) => tse.value != null)
             .map(

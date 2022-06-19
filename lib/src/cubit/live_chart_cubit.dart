@@ -9,18 +9,17 @@ class LiveChartCubit extends ChartCubit<LiveChartState> {
 
   LiveChartCubit({
     required final Pk<ChartPage> chartPageId,
-    required final List<TimeSerial> timeSerials,
     required final bool playing,
     required final ChartType chartType,
     final List<Pk<TimeSerial>>? visibleTimeSerials,
+    required super.timeSerialRepository,
   }) : super(
           chartPageId: chartPageId,
           chartType: chartType,
           initialState: LiveChartState(
-            values: _timeSeriesToMap2(timeSerials),
-            timeSerials: timeSerials,
-            visibleTimeSerials:
-                visibleTimeSerials ?? timeSerials.map((e) => e.id).toList(),
+            values: {},
+            timeSerials: [],
+            visibleTimeSerials: [],
             playing: playing,
           ),
         ) {
@@ -30,6 +29,25 @@ class LiveChartCubit extends ChartCubit<LiveChartState> {
         (Timer t) => _refresh(),
       );
     }
+  }
+
+  @override
+  void init(final List<Pk<TimeSerial>>? visibleTimeSerials) async {
+    final List<TimeSerial> timeSerials = await timeSerialRepository.all([
+      Filter(
+        key: 'chart_page_id',
+        operator: FilterType.EQ,
+        value: chartPageId.toString(),
+      )
+    ]);
+    emit(
+      state.copyWith(
+        values: _timeSeriesToMap2(timeSerials),
+        timeSerials: timeSerials,
+        visibleTimeSerials:
+            visibleTimeSerials ?? timeSerials.map((e) => e.id).toList(),
+      ),
+    );
   }
 
   @override
