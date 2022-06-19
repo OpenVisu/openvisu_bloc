@@ -74,13 +74,13 @@ abstract class CrudBloc<T extends Model<T>>
     add(SetOne<T>(model: model));
   }
 
-  void _handleResetEvent(Reset<T> _, Emitter<CrudState<T>> emit) async {
+  Future<void> _handleResetEvent(Reset<T> _, Emitter<CrudState<T>> emit) async {
     queriesClear();
     crudRepository.cacheClear();
     emit(InitLoadingState<T>());
   }
 
-  void _handleGetMultipleEvent(
+  Future<void> _handleGetMultipleEvent(
       GetMultiple<T> event, Emitter<CrudState<T>> emit) async {
     final List<T>? models = crudRepository.getListCache(
       event.filters.toString(),
@@ -118,7 +118,10 @@ abstract class CrudBloc<T extends Model<T>>
     }
   }
 
-  void _handleGetEvent(GetOne<T> event, Emitter<CrudState<T>> emit) async {
+  Future<void> _handleGetEvent(
+    GetOne<T> event,
+    Emitter<CrudState<T>> emit,
+  ) async {
     // create a new model
     if (event.id.isNew && event.filters == null && event.identifier != null) {
       emit(OneResultState<T>(
@@ -171,7 +174,8 @@ abstract class CrudBloc<T extends Model<T>>
     }
   }
 
-  void _handleSetEvent(SetOne<T> event, Emitter<CrudState<T>> emit) async {
+  Future<void> _handleSetEvent(
+      SetOne<T> event, Emitter<CrudState<T>> emit) async {
     crudRepository.setItemCache(event.model);
     emit(OneResultState<T>(
       model: event.model,
@@ -181,7 +185,7 @@ abstract class CrudBloc<T extends Model<T>>
     ));
   }
 
-  void handleSortEvent(Sort<T> event, Emitter<CrudState<T>> emit) async {
+  handleSortEvent(Sort<T> event, Emitter<CrudState<T>> emit) async {
     emit(MultipleResultState(models: event.models, isLoading: true));
     try {
       await crudRepository.sort(event.models.map((e) => e.id).toList());
@@ -204,7 +208,8 @@ abstract class CrudBloc<T extends Model<T>>
     }
   }
 
-  void _handleSaveEvent(Save<T> event, Emitter<CrudState<T>> emit) async {
+  Future<void> _handleSaveEvent(
+      Save<T> event, Emitter<CrudState<T>> emit) async {
     try {
       emit(OneResultState<T>(
         model: event.model,
@@ -220,6 +225,7 @@ abstract class CrudBloc<T extends Model<T>>
         queriesModelAdded(model, emit);
       } else {
         model = await crudRepository.update(event.model);
+        queriesModelUpdated(model, emit);
       }
       if (event.onSuccess != null) await event.onSuccess!(model as T);
       emit(OneResultState<T>(
@@ -249,7 +255,8 @@ abstract class CrudBloc<T extends Model<T>>
     }
   }
 
-  void _handleSwapEvent(Swap<T> event, Emitter<CrudState<T>> emit) async {
+  Future<void> _handleSwapEvent(
+      Swap<T> event, Emitter<CrudState<T>> emit) async {
     try {
       await crudRepository.swap(event.x, event.y);
       emit(OneResultState<T>(
@@ -277,7 +284,8 @@ abstract class CrudBloc<T extends Model<T>>
     }
   }
 
-  void _handleDeleteEvent(Delete<T> event, Emitter<CrudState<T>> emit) async {
+  Future<void> _handleDeleteEvent(
+      Delete<T> event, Emitter<CrudState<T>> emit) async {
     await event.model.beforeDelete();
     try {
       await crudRepository.delete(event.model.id);
@@ -302,23 +310,7 @@ abstract class CrudBloc<T extends Model<T>>
     }
   }
 
-  @override
-  void onTransition(
-    Transition<CrudEvent<T>, CrudState<T>> transition,
-  ) {
-    if (transition.event is Save<T> &&
-        transition.nextState is OneResultState<T>) {
-      final OneResultState<T> s = transition.nextState as OneResultState<T>;
-      if (s.error == null) {
-        for (GetEvent<T> getEvent in queriesAll()) {
-          if (getEvent is GetMultiple<T>) {
-            // multiple filters might be affected, thus reload all of them
-            add(getEvent);
-          }
-        }
-      }
-    }
-
-    super.onTransition(transition);
+  Future<void> _handleEditNodeEvent(event, emit) async {
+    await crudRepository.editNode(event.nodeId, event.newValue);
   }
 }

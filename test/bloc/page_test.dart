@@ -144,10 +144,66 @@ void main() {
       },
     );
 
-    // TODO add tests for Save<Page>() for existing models (update)
-
     /// helper var to temporarily store the current page used by the tests
     late Page page;
+
+    /// test if updateing a model updates GetOne<Page> and
+    /// GetMultiple<Page> queries
+    blocTest<PageBloc, CrudState<Page>>(
+      'test Save<Page>() for existing model',
+      setUp: () async {
+        page = Page.createDefault().copyWith(
+          name: 'test name',
+          dashboardId: Pk<Dashboard>(1),
+          pageType: PageType.text,
+        );
+        page = await pageRepository.add(page);
+        pageRepository.cacheClear();
+      },
+      build: () => PageBloc(
+        repository: pageRepository,
+        authenticationBloc: authenticationBloc,
+      ),
+      act: (bloc) {
+        bloc.queriesAdd(GetOne<Page>(id: page.id));
+        bloc.queriesAdd(const GetMultiple<Page>(filters: []));
+        bloc.add(Save<Page>(model: page.copyWith(name: 'new test name')));
+      },
+      wait: const Duration(seconds: 10),
+      expect: () => [
+        // one states because of queriesAdd(GetOne<Page>)
+        isA<OneResultState<Page>>()
+            .having((s) => s.isSaved, 'isSaved', true)
+            .having((s) => s.isLoading, 'isLoading', false)
+            .having((s) => s.model!.name, 'model.name', 'test name'),
+        // first state because of queriesAdd(GetMultiple<Page>)
+        isA<MultipleResultState<Page>>()
+            .having((s) => s.hasData, 'hasData', true)
+            .having((s) => s.isLoading, 'isLoading', false),
+
+        // first state because of Save<Page>()
+        isA<OneResultState<Page>>()
+            .having((s) => s.isSaved, 'isSaved', false)
+            .having((s) => s.isLoading, 'isLoading', true)
+            .having((s) => s.model!.name, 'model.name', 'new test name'),
+        // second state because of Save<Page>()
+        isA<OneResultState<Page>>()
+            .having((s) => s.isSaved, 'isSaved', true)
+            .having((s) => s.isLoading, 'isLoading', false)
+            .having((s) => s.model!.name, 'model.name', 'new test name'),
+        // third state because of Save<Page>()
+        isA<MultipleResultState<Page>>()
+            .having((s) => s.hasData, 'hasData', true)
+            .having((s) => s.isLoading, 'isLoading', true),
+        isA<MultipleResultState<Page>>()
+            .having((s) => s.hasData, 'hasData', true)
+            .having((s) => s.isLoading, 'isLoading', false),
+      ],
+      tearDown: () async {
+        await pageRepository.delete(page.id);
+        pageRepository.cacheClear();
+      },
+    );
 
     /// test if model gets deleted
     blocTest<PageBloc, CrudState<Page>>(
