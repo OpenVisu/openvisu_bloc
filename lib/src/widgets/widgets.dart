@@ -21,3 +21,4 @@ export 'view_model.dart';
 export 'view_models.dart';
 export 'backend_error_widget.dart';
 export 'block_providers.dart';
+export 'view_multiple_last_time_series_entries.dart';
