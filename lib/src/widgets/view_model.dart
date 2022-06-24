@@ -18,7 +18,6 @@ class ViewModel<M extends Model<M>, BES extends CrudBloc<M>>
     required this.buildWithModel,
     this.buildLoading,
     this.ignoreUnsaved = true,
-    this.initalValue,
     this.autoUpdate = false,
   }) : super(key: key);
 
@@ -26,7 +25,6 @@ class ViewModel<M extends Model<M>, BES extends CrudBloc<M>>
   final BuildViewWithModel<M> buildWithModel;
   final LoadingBuildFunction<M>? buildLoading;
   final bool ignoreUnsaved;
-  final M? initalValue;
   final bool autoUpdate;
 
   @override
@@ -39,14 +37,6 @@ class _ViewModelState<M extends Model<M>, BES extends CrudBloc<M>>
   late final BES bloc = BlocProvider.of<BES>(context);
 
   Widget onLoading(final double? progress) {
-    if (widget.initalValue != null) {
-      return widget.buildWithModel(
-        widget.initalValue!,
-        false,
-        null,
-        null,
-      );
-    }
     if (widget.buildLoading != null) {
       return widget.buildLoading!(progress);
     }
@@ -78,9 +68,7 @@ class _ViewModelState<M extends Model<M>, BES extends CrudBloc<M>>
   @override
   void initState() {
     super.initState();
-    if (widget.initalValue == null) {
-      bloc.queriesAdd(queryEvent);
-    }
+    bloc.queriesAdd(queryEvent);
     if (widget.autoUpdate) {
       bloc.addListener(queryEvent);
     }

@@ -12,12 +12,11 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-library openvisu_bloc;
 
-export 'src/bloc/blocs.dart';
-export 'src/cubit/cubits.dart';
-export 'src/states/states.dart';
-export 'src/events/events.dart';
-export 'src/widgets/widgets.dart';
-export 'src/typedefs/typedefs.dart';
-export 'src/interfaces/interfaces.dart';
+abstract class ViewWindowOnMeasurementsControler {
+  void goLeft({required double percentage});
+  void goRight({required double percentage});
+
+  void zoom(double scale, double focus);
+  void panedOrZoomedTo(DateTime start, DateTime end);
+}
