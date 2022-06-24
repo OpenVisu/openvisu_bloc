@@ -60,7 +60,6 @@ void main() {
       );
     });
 
-    /*
     late Pk<Node> nodeId;
 
     blocTest<CrudBloc<Node>, CrudState<Node>>(
@@ -87,9 +86,8 @@ void main() {
 
         nodeId = state.models!.first.id;
       },
-    );*/
+    );
 
-    /*
     blocTest<CrudBloc<Node>, CrudState<Node>>(
       'getOne authenticated',
       setUp: () async {
@@ -108,6 +106,6 @@ void main() {
         final OneResultState<Node> state = bloc.state as OneResultState<Node>;
         expect(state.id, nodeId);
       },
-    );*/
+    );
   });
 }
