@@ -69,10 +69,10 @@ void main() {
         repository: pageRepository,
         authenticationBloc: authenticationBloc,
       ),
-      act: (bloc) => bloc.add(GetOne<Page>(id: Pk<Page>(2))),
+      act: (bloc) => bloc.add(GetOne<Page>(id: Pk<Page>(12345))),
       expect: () => [
         isA<OneResultState<Page>>()
-            .having((s) => s.id, 'test id', Pk<Page>(2))
+            .having((s) => s.id, 'test id', Pk<Page>(12345))
             .having((s) => s.error, 'has error', isNotNull),
       ],
       tearDown: () {
