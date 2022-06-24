@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:openvisu_bloc/openvisu_bloc.dart';
 

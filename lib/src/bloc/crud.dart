@@ -285,8 +285,9 @@ abstract class CrudBloc<T extends Model<T>>
   }
 
   Future<void> _handleDeleteEvent(
-      Delete<T> event, Emitter<CrudState<T>> emit) async {
-    await event.model.beforeDelete();
+    Delete<T> event,
+    Emitter<CrudState<T>> emit,
+  ) async {
     try {
       await crudRepository.delete(event.model.id);
       queriesModelDeleted(event.model.id, emit);
