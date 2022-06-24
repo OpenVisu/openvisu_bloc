@@ -6,12 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 import 'package:openvisu_bloc/src/helper/queries.dart';
-import 'package:openvisu_bloc/src/helper/updater.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:openvisu_bloc/openvisu_bloc.dart';
 
 abstract class CrudBloc<T extends Model<T>>
-    extends Bloc<CrudEvent<T>, CrudState<T>> with Queries<T>, Updater<T> {
+    extends Bloc<CrudEvent<T>, CrudState<T>> with Queries<T> {
   static final log = Logger('bloc/CrudBloc');
 
   Future<void> slowDown() async {
@@ -24,7 +23,6 @@ abstract class CrudBloc<T extends Model<T>>
 
   CrudBloc({required this.authenticationBloc}) : super(InitLoadingState<T>()) {
     queriesInit(this);
-    updaterInit(this);
 
     authenticationBloc.registerBloc(this);
 
