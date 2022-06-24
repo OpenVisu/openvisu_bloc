@@ -180,17 +180,3 @@ class Sort<T extends Model<T>> extends CrudEvent<T> {
       models,
     ]);
 }
-
-// TODO check if this can be removed?
-class EditNode<T extends Model<T>> extends CrudEvent<T> {
-  final int? nodeId;
-  final dynamic newValue;
-
-  const EditNode({required this.nodeId, required this.newValue});
-  @override
-  List<Object> get props => super.props
-    ..addAll([
-      if (nodeId != null) nodeId!,
-      if (nodeId != newValue) newValue!,
-    ]);
-}

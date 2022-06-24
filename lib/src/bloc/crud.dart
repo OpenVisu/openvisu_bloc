@@ -46,8 +46,6 @@ abstract class CrudBloc<T extends Model<T>>
           await _handleSaveEvent(event, emit);
         } else if (event is Delete<T>) {
           await _handleDeleteEvent(event, emit);
-        } else if (event is EditNode<T>) {
-          await _handleEditNodeEvent(event, emit);
         }
       },
       transformer: sequential(),
@@ -309,9 +307,5 @@ abstract class CrudBloc<T extends Model<T>>
       addError(e, StackTrace.current);
       authenticationBloc.add(DoLogOut());
     }
-  }
-
-  Future<void> _handleEditNodeEvent(event, emit) async {
-    await crudRepository.editNode(event.nodeId, event.newValue);
   }
 }
