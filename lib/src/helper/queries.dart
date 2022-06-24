@@ -35,16 +35,24 @@ abstract class Queries<T extends Model<T>> {
     return _queries.containsKey(getEvent);
   }
 
-  void queriesAdd(final GetEvent<T> getEvent) {
+  /// if periodicUpdate is set to true, the event will be
+  /// reloaded ever 15 seconds TODO implement
+  void queriesAdd(
+    final GetEvent<T> getEvent, {
+    final bool periodicUpdate = false,
+  }) {
     if (queriesContains(getEvent)) {
       _queries[getEvent] = _queries[getEvent]! + 1;
     } else {
-      bloc.add(getEvent);
       _queries[getEvent] = 1;
     }
+    bloc.add(getEvent);
   }
 
-  void queriesRemove(final GetEvent<T> getEvent) {
+  void queriesRemove(
+    final GetEvent<T> getEvent, {
+    final bool periodicUpdate = false,
+  }) {
     if (queriesContains(getEvent) && _queries[getEvent]! > 1) {
       _queries[getEvent] = _queries[getEvent]! - 1;
     } else {

@@ -89,15 +89,17 @@ void main() {
         authenticationBloc: authenticationBloc,
       ),
       act: (bloc) {
-        bloc.addListener(GetMultiple<Page>(
-          filters: [
-            Filter(
-              key: 'dashboard_id',
-              operator: FilterType.EQ,
-              value: Pk<Dashboard>(1).toString(),
+        bloc.queriesAdd(
+            GetMultiple<Page>(
+              filters: [
+                Filter(
+                  key: 'dashboard_id',
+                  operator: FilterType.EQ,
+                  value: Pk<Dashboard>(1).toString(),
+                ),
+              ],
             ),
-          ],
-        ));
+            periodicUpdate: true);
         bloc.add(
           Save<Page>(
             model: Page.createDefault().copyWith(
@@ -129,15 +131,18 @@ void main() {
       ],
       verify: (bloc) {
         // bloc needed to tearDown
-        bloc.removeListener(GetMultiple<Page>(
-          filters: [
-            Filter(
-              key: 'dashboard_id',
-              operator: FilterType.EQ,
-              value: Pk<Dashboard>(1).toString(),
-            ),
-          ],
-        ));
+        bloc.queriesRemove(
+          GetMultiple<Page>(
+            filters: [
+              Filter(
+                key: 'dashboard_id',
+                operator: FilterType.EQ,
+                value: Pk<Dashboard>(1).toString(),
+              ),
+            ],
+          ),
+          periodicUpdate: true,
+        );
       },
       tearDown: () {
         pageRepository.cacheClear();

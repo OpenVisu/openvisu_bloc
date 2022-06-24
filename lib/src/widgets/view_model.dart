@@ -68,18 +68,12 @@ class _ViewModelState<M extends Model<M>, BES extends CrudBloc<M>>
   @override
   void initState() {
     super.initState();
-    bloc.queriesAdd(queryEvent);
-    if (widget.autoUpdate) {
-      bloc.addListener(queryEvent);
-    }
+    bloc.queriesAdd(queryEvent, periodicUpdate: widget.autoUpdate);
   }
 
   @override
   void dispose() {
-    if (widget.autoUpdate) {
-      bloc.removeListener(queryEvent);
-    }
-    bloc.queriesRemove(queryEvent);
+    bloc.queriesRemove(queryEvent, periodicUpdate: widget.autoUpdate);
     super.dispose();
   }
 
