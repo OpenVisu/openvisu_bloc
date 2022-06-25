@@ -16,10 +16,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openvisu_bloc/src/cubit/multiple_time_series_entries_cubit.dart';
+import 'package:openvisu_bloc/src/states/multiple_time_series_entries_state.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
 
 typedef BuildViewWithTses = Widget Function(
   BuildContext context,
+  DateTime timestamp,
   Map<Pk<TimeSerial>, TimeSeriesEntry<double?>?> models,
 );
 
@@ -36,13 +38,17 @@ class ViewMultipleLastTimeSeriesEntries extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MultipleTimeSeriesEntriesCubit,
-        Map<Pk<TimeSerial>, TimeSeriesEntry<double?>?>>(
+        MultipleTimeSeriesEntriesState>(
       bloc: MultipleTimeSeriesEntriesCubit(
         ids: ids,
         timeSeriesEntryRepository:
             RepositoryProvider.of<TimeSeriesEntryRepository>(context),
       ),
-      builder: buildWithData,
+      builder: (
+        final BuildContext context,
+        final MultipleTimeSeriesEntriesState state,
+      ) =>
+          buildWithData(context, state.timestamp, state.data),
     );
   }
 }

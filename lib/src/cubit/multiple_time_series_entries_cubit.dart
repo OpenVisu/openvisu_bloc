@@ -16,10 +16,11 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openvisu_bloc/src/states/multiple_time_series_entries_state.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
 
 class MultipleTimeSeriesEntriesCubit
-    extends Cubit<Map<Pk<TimeSerial>, TimeSeriesEntry<double?>?>> {
+    extends Cubit<MultipleTimeSeriesEntriesState> {
   final TimeSeriesEntryRepository timeSeriesEntryRepository;
   final List<Pk<TimeSerial>> ids;
 
@@ -28,10 +29,12 @@ class MultipleTimeSeriesEntriesCubit
   MultipleTimeSeriesEntriesCubit({
     required this.ids,
     required this.timeSeriesEntryRepository,
-  }) : super({
-          for (final Pk<TimeSerial> id in ids)
-            id: timeSeriesEntryRepository.getLast(id),
-        }) {
+  }) : super(
+          MultipleTimeSeriesEntriesState({
+            for (final Pk<TimeSerial> id in ids)
+              id: timeSeriesEntryRepository.getLast(id),
+          }),
+        ) {
     timer = Timer.periodic(const Duration(seconds: 5), _update);
   }
 
@@ -44,13 +47,13 @@ class MultipleTimeSeriesEntriesCubit
     };
 
     for (final Pk<TimeSerial> id in ids) {
-      if (state[id] == null && newMap[id] != null) {
-        emit(newMap);
+      if (state.data[id] == null && newMap[id] != null) {
+        emit(MultipleTimeSeriesEntriesState(newMap));
         return;
-      } else if (state[id] != null &&
+      } else if (state.data[id] != null &&
           newMap[id] != null &&
-          state[id]!.time.isBefore(newMap[id]!.time)) {
-        emit(newMap);
+          state.data[id]!.time.isBefore(newMap[id]!.time)) {
+        emit(MultipleTimeSeriesEntriesState(newMap));
         return;
       }
     }
