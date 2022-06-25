@@ -112,6 +112,7 @@ void main() {
       },
       wait: const Duration(seconds: 10),
       expect: () => [
+        isA<MultipleResultState<Page>>(),
         isA<OneResultState<Page>>()
             .having((s) => s.isSaved, 'test isSaved', false)
             .having((s) => s.model!.isNew, 'test if model isNew', true),
@@ -127,7 +128,8 @@ void main() {
           (s) => s.models,
           'test if models exist',
           isNotNull,
-        )
+        ),
+        isA<MultipleResultState<Page>>(),
       ],
       verify: (bloc) {
         // bloc needed to tearDown
