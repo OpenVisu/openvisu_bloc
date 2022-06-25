@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
 import 'package:openvisu_bloc/openvisu_bloc.dart';
 
@@ -13,7 +14,10 @@ class ServerStatusBloc
   final Duration httpTimeOut;
 
   ServerStatusBloc(this.httpTimeOut) : super(null) {
-    super.on<GetServerStatusEvent>(_getServerStatus);
+    super.on<GetServerStatusEvent>(
+      _getServerStatus,
+      transformer: sequential(),
+    );
   }
 
   Future<void> _getServerStatus(
