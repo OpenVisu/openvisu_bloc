@@ -53,9 +53,10 @@ void main() {
       testQueries.queriesAdd(getOne1);
       verify(() => bloc.add(getOne1)).called(1);
 
-      // adding a query the second time does not trigger bloc.add()
+      // adding a query the second time must trigger bloc.add(), otherwise
+      // a new widget will not recive the state
       testQueries.queriesAdd(getOne1);
-      verifyNever(() => bloc.add(getOne1));
+      verify(() => bloc.add(getOne1)).called(1);
 
       // adding a different query does trigger bloc.add()
       testQueries.queriesAdd(getOne2);
