@@ -41,6 +41,8 @@ class MultipleTimeSeriesEntriesCubit
   _update(Timer timer) {
     if (isClosed) return;
 
+    if (!timeSeriesEntryRepository.hasChanged(state.timestamp)) return;
+
     Map<Pk<TimeSerial>, TimeSeriesEntry<double?>?> newMap = {
       for (final Pk<TimeSerial> id in ids)
         id: timeSeriesEntryRepository.getLast(id),
