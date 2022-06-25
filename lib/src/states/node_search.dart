@@ -77,8 +77,6 @@ class NodeSearchState {
     return [
       if (nodeId.isNotEmpty)
         Filter(key: 'identifier', operator: FilterType.LIKE, value: nodeId),
-      if (nodeId.isNotEmpty)
-        Filter(key: 'identifier', operator: FilterType.LIKE, value: nodeId),
       if (displayName.isNotEmpty)
         Filter(
             key: 'display_name', operator: FilterType.LIKE, value: displayName),

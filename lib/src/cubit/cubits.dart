@@ -14,5 +14,5 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export 'me.dart';
-export 'node.dart';
+export 'node_search.dart';
 export 'visible_time_serials_cubit.dart';

@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:openvisu_bloc/openvisu_bloc.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
 
@@ -8,14 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 Function uolwq = const DeepCollectionEquality.unordered().equals;
 
 /// Node Cubit which handles the list of nodes searchable by the user
-class NodeCubit extends Cubit<NodeSearchState> {
+class NodeSearchCubit extends Cubit<NodeSearchState> {
   final NodeRepository nodeRepository;
 
   /// Initiating the Cubit with an empty list
-  NodeCubit({
-    required final BuildContext context,
-  })  : nodeRepository = RepositoryProvider.of<NodeRepository>(context),
-        super(NodeSearchState()) {
+  NodeSearchCubit({
+    required final this.nodeRepository,
+  }) : super(NodeSearchState()) {
     loadData();
   }
 
