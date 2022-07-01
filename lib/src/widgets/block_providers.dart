@@ -17,7 +17,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:openvisu_bloc/openvisu_bloc.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
-import 'package:provider/provider.dart';
 
 class OvBlocProviders extends StatelessWidget {
   final Widget child;
@@ -141,6 +140,6 @@ class OvBlocProviders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(providers: providers, child: child);
+    return MultiBlocProvider(providers: providers, child: child);
   }
 }
