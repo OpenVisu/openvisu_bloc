@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ServerStatusBloc
     extends Bloc<GetServerStatusEvent, GetServerStatusState?> {
   late final ServerStatusRepository serverStatusRepository =
-      ServerStatusRepository(httpTimeOut);
+      ServerStatusRepository();
   Timer timer = Timer(Duration.zero, () {});
 
   final Duration httpTimeOut;

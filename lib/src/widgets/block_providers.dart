@@ -29,7 +29,7 @@ class OvBlocProviders extends StatelessWidget {
     Key? key,
     required this.authenticationBloc,
     required this.child,
-    required this.httpTimeOut,
+    this.httpTimeOut = const Duration(seconds: 10),
   }) : super(key: key) {
     providers = [
       BlocProvider<AuthenticationBloc>(
