@@ -35,9 +35,6 @@ void main() {
       credentialsRepository: mockCredentialsRepository,
       httpTimeOut: const Duration(seconds: 10),
     );
-    final AuthenticationBloc authenticationBloc = AuthenticationBloc(
-      authenticationRepository,
-    );
     final MockAuthenticationBloc mockAuthenticationBloc =
         MockAuthenticationBloc();
 
