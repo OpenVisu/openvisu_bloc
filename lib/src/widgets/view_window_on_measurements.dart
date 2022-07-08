@@ -29,9 +29,11 @@ class ViewWindowOnMeasurements extends StatelessWidget {
   final List<Pk<TimeSerial>> timeSerialIds;
   final Duration viewPortWidth;
   final BuildViewWithMeasurements buildWithData;
+  final Pk<ChartPage> chartPageId;
 
   const ViewWindowOnMeasurements({
     super.key,
+    required this.chartPageId,
     required this.timeSerialIds,
     required this.viewPortWidth,
     required this.buildWithData,
@@ -40,6 +42,7 @@ class ViewWindowOnMeasurements extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ViewWindowOnMeasurementsCubit cubit = ViewWindowOnMeasurementsCubit(
+      chartPageId: chartPageId,
       timeSerialIds: timeSerialIds,
       viewPortWidth: viewPortWidth,
       measurementsRepository:

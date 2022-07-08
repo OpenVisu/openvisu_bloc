@@ -20,30 +20,23 @@ import 'package:openvisu_repository/openvisu_repository.dart';
 
 class ViewWindowOnMeasurementsCubit extends Cubit<MultipleMeasurementsState>
     implements ViewWindowOnMeasurementsControler {
+  final Pk<ChartPage> chartPageId;
   final List<Pk<TimeSerial>> timeSerialIds;
   final MeasurementsRepository measurementsRepository;
+  final TimeSeriesCache cache = TimeSeriesCache();
+  final TimeSeriesLoader timeSeriesLoader = TimeSeriesLoader();
 
   /// part of the viewport (time) that needs to pass before the chart is updated
   /// by the time
   final updateRate = 0.1;
 
   ViewWindowOnMeasurementsCubit({
+    required this.chartPageId,
     required this.timeSerialIds,
     required this.measurementsRepository,
     required Duration viewPortWidth,
-  }) : super(MultipleMeasurementsState.init(viewPortWidth)) {
-    _init();
-  }
-
-  _init() {
-    emit(state.copyWith(
-      measurements: measurementsRepository.getMultipleCached(
-        timeSerialIds,
-        state.viewPortStart,
-        state.viewPortEnd,
-      ),
-      loading: false,
-    ));
+  }) : super(MultipleMeasurementsState.init(viewPortWidth, timeSerialIds)) {
+    panedOrZoomedTo(state.viewPortStart, state.viewPortEnd);
   }
 
   @override
