@@ -49,4 +49,9 @@ class MultipleMeasurementsState {
   }
 
   Duration get viewPortWidth => viewPortEnd.difference(viewPortStart);
+
+  @override
+  String toString() {
+    return 'MultipleMeasurementsState(loading: $loading, measurements.length: ${measurements.length}), measurements[Pk<TimeSerial>(1)]!.length: ${measurements[Pk<TimeSerial>(1)]!.length}, from: $viewPortStart, to: $viewPortEnd';
+  }
 }
