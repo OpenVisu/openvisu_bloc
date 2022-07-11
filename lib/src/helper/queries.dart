@@ -44,7 +44,7 @@ abstract class Queries<T extends Model<T>> {
   }
 
   /// if periodicUpdate is set to true, the event will be
-  /// reloaded ever 15 seconds
+  /// reloaded ever 5 seconds
   void queriesAdd(
     final GetEvent<T> getEvent, {
     final bool periodicUpdate = false,
