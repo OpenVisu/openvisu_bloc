@@ -144,7 +144,7 @@ void main() {
               ),
             ],
           ),
-          periodicUpdate: true,
+          periodicUpdate: false,
         );
       },
       tearDown: () {
