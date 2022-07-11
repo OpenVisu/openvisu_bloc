@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:openvisu_bloc/openvisu_bloc.dart';
 import 'package:openvisu_repository/openvisu_repository.dart';
@@ -20,8 +22,10 @@ import 'package:openvisu_repository/openvisu_repository.dart';
 abstract class Queries<T extends Model<T>> {
   // list of queries that are active somwhere in the ui
   final Map<GetEvent<T>, int> _queries = {};
+  final Map<GetEvent<T>, int> _activeQueries = {};
 
   late CrudBloc<T> bloc;
+  Timer? timer;
 
   void queriesInit(CrudBloc<T> bloc) {
     this.bloc = bloc;
@@ -35,8 +39,12 @@ abstract class Queries<T extends Model<T>> {
     return _queries.containsKey(getEvent);
   }
 
+  bool activeQueriesContains(final GetEvent<T> getEvent) {
+    return _activeQueries.containsKey(getEvent);
+  }
+
   /// if periodicUpdate is set to true, the event will be
-  /// reloaded ever 15 seconds TODO implement
+  /// reloaded ever 15 seconds
   void queriesAdd(
     final GetEvent<T> getEvent, {
     final bool periodicUpdate = false,
@@ -45,6 +53,16 @@ abstract class Queries<T extends Model<T>> {
       _queries[getEvent] = _queries[getEvent]! + 1;
     } else {
       _queries[getEvent] = 1;
+    }
+    if (periodicUpdate) {
+      if (timer == null || !timer!.isActive) {
+        timer = Timer.periodic(const Duration(seconds: 5), _update);
+      }
+      if (activeQueriesContains(getEvent)) {
+        _activeQueries[getEvent] = _activeQueries[getEvent]! + 1;
+      } else {
+        _activeQueries[getEvent] = 1;
+      }
     }
     bloc.add(getEvent);
   }
@@ -57,6 +75,16 @@ abstract class Queries<T extends Model<T>> {
       _queries[getEvent] = _queries[getEvent]! - 1;
     } else {
       _queries.remove(getEvent);
+    }
+    if (periodicUpdate) {
+      if (activeQueriesContains(getEvent) && _activeQueries[getEvent]! > 1) {
+        _activeQueries[getEvent] = _activeQueries[getEvent]! - 1;
+      } else {
+        _activeQueries.remove(getEvent);
+      }
+      if (_activeQueries.isEmpty) {
+        timer!.cancel();
+      }
     }
   }
 
@@ -102,11 +130,17 @@ abstract class Queries<T extends Model<T>> {
           // the item was deleted, thus all further queries would fail
           _queriesRemoveAll(getEvent);
         }
-      } 
+      }
       if (getEvent is GetMultiple<T>) {
         // multiple filters might be affected, thus reload all of them
         bloc.add(getEvent);
       }
+    }
+  }
+
+  _update(Timer timer) {
+    for (GetEvent<T> event in _activeQueries.keys) {
+      bloc.add(event);
     }
   }
 }
