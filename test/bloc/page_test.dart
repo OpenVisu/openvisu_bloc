@@ -90,16 +90,17 @@ void main() {
       ),
       act: (bloc) {
         bloc.queriesAdd(
-            GetMultiple<Page>(
-              filters: [
-                Filter(
-                  key: 'dashboard_id',
-                  operator: FilterType.EQ,
-                  value: Pk<Dashboard>(1).toString(),
-                ),
-              ],
-            ),
-            periodicUpdate: true);
+          GetMultiple<Page>(
+            filters: [
+              Filter(
+                key: 'dashboard_id',
+                operator: FilterType.EQ,
+                value: Pk<Dashboard>(1).toString(),
+              ),
+            ],
+          ),
+          periodicUpdate: false,
+        );
         bloc.add(
           Save<Page>(
             model: Page.createDefault().copyWith(
