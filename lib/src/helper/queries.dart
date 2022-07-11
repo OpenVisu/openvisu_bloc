@@ -82,7 +82,7 @@ abstract class Queries<T extends Model<T>> {
       } else {
         _activeQueries.remove(getEvent);
       }
-      if (_activeQueries.isEmpty) {
+      if (timer != null && timer!.isActive && _activeQueries.isEmpty) {
         timer!.cancel();
       }
     }
