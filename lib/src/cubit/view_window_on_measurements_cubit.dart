@@ -107,8 +107,17 @@ class ViewWindowOnMeasurementsCubit extends Cubit<MultipleMeasurementsState>
       state.viewPortEnd,
     );
 
+    var stepSize = StepSize.fromStartStop(start, stop);
+    var leftOfStart = start.subtract(stepSize.delta);
+    var rightOfStop = stop.add(stepSize.delta);
+
     emit(state.copyWith(
-      measurements: loader.cache.getMultiple(timeSerialIds, start, stop),
+      measurements: loader.cache.getMultiple(
+        timeSerialIds,
+        leftOfStart,
+        rightOfStop,
+        stepSize,
+      ),
       viewPortStart: start,
       viewPortEnd: stop,
       loading: requiresLoad,
@@ -120,14 +129,23 @@ class ViewWindowOnMeasurementsCubit extends Cubit<MultipleMeasurementsState>
         timeSerialIds,
         state.viewPortStart,
         state.viewPortEnd,
+        stepSize,
       );
 
       if (!isClosed) {
+        stepSize = StepSize.fromStartStop(
+          state.viewPortStart,
+          state.viewPortEnd,
+        );
+        leftOfStart = state.viewPortStart.subtract(stepSize.delta);
+        rightOfStop = state.viewPortEnd.add(stepSize.delta);
+
         emit(state.copyWith(
           measurements: loader.cache.getMultiple(
             timeSerialIds,
-            state.viewPortStart,
-            state.viewPortEnd,
+            leftOfStart,
+            rightOfStop,
+            stepSize,
           ),
           loading: false,
         ));
