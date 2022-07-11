@@ -17,15 +17,18 @@ import 'package:openvisu_repository/openvisu_repository.dart';
 
 class MultipleMeasurementsState {
   final Map<Pk<TimeSerial>, List<TimeSeriesEntry<double?>>> measurements;
-  final DateTime viewPortStart;
-  final DateTime viewPortEnd;
+  late final DateTime viewPortStart;
+  late final DateTime viewPortEnd;
   final bool loading;
 
-  MultipleMeasurementsState.init(final Duration viewPortWidth)
-      : measurements = {},
-        loading = true,
-        viewPortEnd = DateTime.now(),
-        viewPortStart = DateTime.now().subtract(viewPortWidth);
+  MultipleMeasurementsState.init(
+    final Duration viewPortWidth,
+    final List<Pk<TimeSerial>> timeSerialIds,
+  )   : measurements = {},
+        loading = true {
+    viewPortEnd = DateTime.now();
+    viewPortStart = viewPortEnd.subtract(viewPortWidth);
+  }
 
   MultipleMeasurementsState({
     required this.measurements,
