@@ -23,8 +23,7 @@ class ViewWindowOnMeasurementsCubit extends Cubit<MultipleMeasurementsState>
   final Pk<ChartPage> chartPageId;
   final List<Pk<TimeSerial>> timeSerialIds;
   final MeasurementsRepository measurementsRepository;
-  final TimeSeriesCache cache = TimeSeriesCache();
-  final TimeSeriesLoader timeSeriesLoader = TimeSeriesLoader();
+  final TimeSeriesLoader loader = TimeSeriesLoader();
 
   /// part of the viewport (time) that needs to pass before the chart is updated
   /// by the time
@@ -94,22 +93,45 @@ class ViewWindowOnMeasurementsCubit extends Cubit<MultipleMeasurementsState>
   /// currently end-start must be constant
   /// extend later to allow for zooming
   @override
-  void panedOrZoomedTo(DateTime start, DateTime stop) async {
+  Future<void> panedOrZoomedTo(DateTime start, DateTime stop) async {
     final now = DateTime.now();
     if (stop.isAfter(now)) {
       stop = now;
       start = now.subtract(state.viewPortWidth);
     }
 
+    // test if the cache contains all data, if not, a load is required
+    final bool requiresLoad = !loader.cache.existsMultiple(
+      timeSerialIds,
+      state.viewPortStart,
+      state.viewPortEnd,
+    );
+
     emit(state.copyWith(
-      measurements: measurementsRepository.getMultipleCached(
-        timeSerialIds,
-        start,
-        stop,
-      ),
+      measurements: loader.cache.getMultiple(timeSerialIds, start, stop),
       viewPortStart: start,
       viewPortEnd: stop,
-      loading: false,
+      loading: requiresLoad,
     ));
+
+    if (requiresLoad) {
+      await loader.load(
+        chartPageId,
+        timeSerialIds,
+        state.viewPortStart,
+        state.viewPortEnd,
+      );
+
+      if (!isClosed) {
+        emit(state.copyWith(
+          measurements: loader.cache.getMultiple(
+            timeSerialIds,
+            state.viewPortStart,
+            state.viewPortEnd,
+          ),
+          loading: false,
+        ));
+      }
+    }
   }
 }
