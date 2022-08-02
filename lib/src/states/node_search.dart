@@ -79,7 +79,10 @@ class NodeSearchState {
         Filter(key: 'identifier', operator: FilterType.LIKE, value: nodeId),
       if (displayName.isNotEmpty)
         Filter(
-            key: 'display_name', operator: FilterType.LIKE, value: displayName),
+          key: 'display_name',
+          operator: FilterType.LIKE,
+          value: displayName,
+        ),
       if (dataType != DataType.none)
         Filter(
           key: 'data_type',
@@ -90,9 +93,10 @@ class NodeSearchState {
         Filter(key: 'server_id', operator: FilterType.EQ, value: '$serverId'),
       if (tracked != null)
         Filter(
-            key: 'tracked',
-            operator: FilterType.EQ,
-            value: tracked! ? '1' : '0'),
+          key: 'tracked',
+          operator: FilterType.EQ,
+          value: tracked! ? '1' : '0',
+        ),
     ];
   }
 }
