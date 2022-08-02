@@ -112,6 +112,90 @@ void main() {
       ],
     );
 
+    blocTest<NodeSearchCubit, NodeSearchState>(
+      'test search() displayName: exact match',
+      build: () => NodeSearchCubit(nodeRepository: nodeRepository),
+      wait: const Duration(seconds: 10),
+      act: (bloc) {
+        bloc.setDisplayName('TestVarInt32');
+      },
+      expect: () => [
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', false)
+            .having((s) => s.loading, 'loading', true),
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', false)
+            .having((s) => s.loading, 'loading', true),
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', false)
+            .having((s) => s.loading, 'loading', true),
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', true)
+            .having((s) => s.loading, 'loading', false)
+            .having((s) => s.results.length, 'results.length', 1),
+      ],
+    );
+
+    blocTest<NodeSearchCubit, NodeSearchState>(
+      'test search() displayName: lowercase match',
+      build: () => NodeSearchCubit(nodeRepository: nodeRepository),
+      wait: const Duration(seconds: 10),
+      act: (bloc) {
+        bloc.setDisplayName('testvarint32');
+      },
+      expect: () => [
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', false)
+            .having((s) => s.loading, 'loading', true),
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', false)
+            .having((s) => s.loading, 'loading', true),
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', false)
+            .having((s) => s.loading, 'loading', true),
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', true)
+            .having((s) => s.loading, 'loading', false)
+            .having((s) => s.results.length, 'results.length', 1),
+      ],
+    );
+
+    blocTest<NodeSearchCubit, NodeSearchState>(
+      'test search() displayName: partly match',
+      build: () => NodeSearchCubit(nodeRepository: nodeRepository),
+      wait: const Duration(seconds: 10),
+      act: (bloc) {
+        bloc.setDisplayName('varint32');
+      },
+      expect: () => [
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', false)
+            .having((s) => s.loading, 'loading', true),
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', false)
+            .having((s) => s.loading, 'loading', true),
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', false)
+            .having((s) => s.loading, 'loading', true),
+        isA<NodeSearchState>()
+            .having((s) => s.totalResultCount, 'totalResultCount', isNull)
+            .having((s) => s.finished, 'finished', true)
+            .having((s) => s.loading, 'loading', false)
+            .having((s) => s.results.length, 'results.length', 1),
+      ],
+    );
+
     tearDownAll(() async {
       await authenticationRepository.doLogout();
     });
