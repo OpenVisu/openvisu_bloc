@@ -1,6 +1,6 @@
 name: openvisu_bloc
 description: A Package to manage OpenVisu Bloc.
-version: 0.0.1
+version: 1.1.2
 homepage: https://github.com/OpenVisu/openvisu_bloc
 publish_to: none
 
