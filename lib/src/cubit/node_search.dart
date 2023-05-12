@@ -12,7 +12,7 @@ class NodeSearchCubit extends Cubit<NodeSearchState> {
 
   /// Initiating the Cubit with an empty list
   NodeSearchCubit({
-    required final this.nodeRepository,
+    required this.nodeRepository,
   }) : super(NodeSearchState()) {
     loadData();
   }
